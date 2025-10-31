@@ -1,8 +1,9 @@
 import { useEffect, useState } from "react";
+import { Link } from 'react-router-dom';
 
 const API = process.env.REACT_APP_API_URL || "http://localhost:4000";
 
-export default function Main({ onSelect = () => {}, onNavigate = () => {} }) {
+export default function Main() {
   const [destacados, setDestacados] = useState([]);
   const [loading, setLoading] = useState(true);
   const [err, setErr] = useState(null);
@@ -32,7 +33,7 @@ export default function Main({ onSelect = () => {}, onNavigate = () => {} }) {
             Nuestra comunicación refleja la esencia artesanal y la calidez humana que
             define cada pieza que creamos
           </p>
-          <button className="boton-hero" onClick={() => onNavigate('catalog')}>Comprar Ahora</button>
+          <Link className="boton-hero" to="/productos">Comprar Ahora</Link>
         </div>
       </section>
 
@@ -69,7 +70,7 @@ export default function Main({ onSelect = () => {}, onNavigate = () => {} }) {
             <h1 className="tit">Nuestros Productos</h1>
             <div className="container-productDes">
               <h2>Descubrí nuestra colección única</h2>
-              <button className="boton-hero" onClick={() => onNavigate('catalog')}>Explorar catalogo</button>
+              <Link className="boton-hero" to="/productos">Explorar catalogo</Link>
             </div>
           </div>
 
@@ -79,12 +80,11 @@ export default function Main({ onSelect = () => {}, onNavigate = () => {} }) {
           {!loading && !err && (
             <div id="destacados" className="product-grid">
               {destacados.map(p => (
-                <div
+                <Link
                   key={p.id}
+                  to={`/productos/${p.id}`}
                   className="product-card"
-                  onClick={() => onSelect(p)}
                   title={p.nombre}
-                  style={{ cursor: 'pointer' }}
                 >
                   <img
                     className="product-img"
@@ -95,7 +95,7 @@ export default function Main({ onSelect = () => {}, onNavigate = () => {} }) {
                     <h3>{p.nombre}</h3>
                     <p className="product-price">${p.precio?.toLocaleString("es-AR")}</p>
                   </div>
-                </div>
+                </Link>
               ))}
               {destacados.length === 0 && (
                 <div className="empty">No hay productos destacados por ahora.</div>

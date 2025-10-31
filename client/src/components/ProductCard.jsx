@@ -1,8 +1,9 @@
 import React from 'react';
+import { Link } from 'react-router-dom'; 
 
-export default function ProductCard({ product, onSelect }) {
+export default function ProductCard({ product }) {
   return (
-    <article className="product-card" onClick={() => onSelect(product)} style={{ cursor: 'pointer' }}>
+    <Link to={`/productos/${product.id}`} className="product-card" style={{ textDecoration: 'none', color: 'inherit' }}>
       <img
         className="product-img"
         src={product.imagen || `/img/hero.jpg`}
@@ -12,6 +13,6 @@ export default function ProductCard({ product, onSelect }) {
         <h3>{product.nombre}</h3>
         <p className="product-price">${product.precio?.toLocaleString('es-AR')}</p>
       </div>
-    </article>
+    </Link>
   );
 }

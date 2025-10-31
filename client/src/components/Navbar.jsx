@@ -1,19 +1,18 @@
 import { useEffect, useRef, useState } from "react";
+import { Link } from "react-router-dom";
 
 export default function Navbar({
   cartItems = [],
   onRemoveFromCart = () => {},
   onCloseCart = () => {},
-  onNavigate = () => {},
 }) {
   const [menuOpen, setMenuOpen] = useState(false); 
   const [cartOpen, setCartOpen] = useState(false);
   const navRef = useRef(null);
-
+  
   const cartCount = cartItems.reduce((acc, it) => acc + (it.cant ?? 1), 0);
   const cartTotal = cartItems.reduce((acc, it) => acc + (it.precio ?? 0) * (it.cant ?? 1), 0);
 
-  // cerrar al click fuera
   useEffect(() => {
     const onDocClick = (e) => {
       if (!navRef.current) return;
@@ -30,39 +29,23 @@ export default function Navbar({
     <header className={""}>
       <div>
         <nav ref={navRef}>
-          <div className="logo" onClick={(e) => { e.preventDefault(); onNavigate('home'); }}>
+          <Link to="/" className="logo">
             <img src="/img/logo.svg" alt="Logo Hermanos Jota" />
             <span className="logo-tit">Hermanos Jota</span>
-          </div>
+          </Link>
 
-          {/* botón hamburguesa (por ahora abre/cierra .nav-menu, tu CSS siempre lo muestra) */}
-          <button
-            className="hamburger"
-            id="nav-toggle"
-            aria-label="Abrir menú"
-            aria-expanded={menuOpen}
-            aria-controls="nav-menu"
-            onClick={(e) => {
-              e.stopPropagation();
-              setMenuOpen((v) => !v);
-            }}
-          >
-            <span></span><span></span><span></span>
-          </button>
-
-          {/* menú colapsable */}
           <div
             className="nav-menu"
             id="nav-menu"
             style={{ display: menuOpen ? "block" : undefined }} 
           >
             <ul className="nav-links" onClick={() => setMenuOpen(false)}>
-              <li><button className="nav-btn" onClick={() => onNavigate('home')}>Inicio</button></li>
-              <li><button className="nav-btn" onClick={() => onNavigate('catalog')}>Catálogo</button></li>
-              <li><button className="nav-btn" onClick={() => onNavigate('contact')}>Contacto</button></li>
+              <li><Link to="/" className="nav-btn">Inicio</Link></li>
+              <li><Link to="/productos" className="nav-btn">Catálogo</Link></li>
+              <li><Link to="/contacto" className="nav-btn">Contacto</Link></li>
             </ul>
 
-            {/* acciones (carrito) */}
+            {/* Carrito */}
             <div className="nav-actions">
               <div
                 id="cart-icon-container"
@@ -87,7 +70,6 @@ export default function Navbar({
                 style={{ display: cartOpen ? "block" : "none" }} 
               >
                 <h3>Carrito</h3>
-
                 <div id="cart-items">
                   {cartItems.length === 0 && <p>Sin productos.</p>}
                   {cartItems.map((it) => (
@@ -109,11 +91,9 @@ export default function Navbar({
                     </div>
                   ))}
                 </div>
-
                 <div id="cart-total">
                   Total: ${cartTotal.toLocaleString("es-AR")}
                 </div>
-
                 <button
                   id="cart-close"
                   onClick={() => {
@@ -125,6 +105,7 @@ export default function Navbar({
                 </button>
               </div>
             </div>
+
           </div>
         </nav>
       </div>

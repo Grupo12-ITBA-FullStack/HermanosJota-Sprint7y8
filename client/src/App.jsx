@@ -1,18 +1,26 @@
 import { useState } from "react";
+import { Routes, Route, useNavigate } from "react-router-dom";
 import Navbar from "./components/Navbar";
 import Footer from "./components/Footer";
-import "./styles.css";
-import "./responsive.css";
 import Main from "./components/Main";
-
+import ProductList from "./components/ProductList";
 import ProductDetail from "./components/ProductDetail";
 import ContactForm from "./components/ContactForm";
-import ProductList from "./components/ProductList";
 
+import "./styles.css";
+import "./responsive.css";
+
+// Componente placeholder para la ruta de admin
+const CreateProductForm = () => (
+  <div className="container">
+    <h2>Crear Nuevo Producto</h2>
+    <p>Aquí irá el formulario para crear productos.</p>
+  </div>
+);
 
 export default function App() {
   const [cart, setCart] = useState([]);
-  const [view, setView] = useState({ name: 'home', payload: null });
+  const navigate = useNavigate(); 
 
   const addToCart = (item) => {
     setCart((prev) => {
@@ -22,35 +30,42 @@ export default function App() {
       }
       return [...prev, { ...item }];
     });
+    navigate('/productos');
   };
 
   const removeFromCart = (id) => setCart((prev) => prev.filter((i) => i.id !== id));
 
-  const openProduct = (product) => setView({ name: 'detail', payload: product });
-  const goHome = () => setView({ name: 'home', payload: null });
-  
-
   return (
     <>
-      <Navbar cartItems={cart} onRemoveFromCart={removeFromCart} onNavigate={(v) => setView({ name: v, payload: null })} />
+      <Navbar 
+        cartItems={cart} 
+        onRemoveFromCart={removeFromCart} 
+      />
 
-      {view.name === 'home' && (
-        <>
-          <Main onSelect={openProduct} onNavigate={(v) => setView({ name: v, payload: null })} />
-        </>
-      )}
-
-      {view.name === 'catalog' && (
-        <ProductList onSelect={openProduct} />
-      )}
-
-      {view.name === 'detail' && (
-        <ProductDetail product={view.payload} onBack={goHome} onAddToCart={(it) => { addToCart(it); goHome(); }} />
-      )}
-
-      {view.name === 'contact' && (
-        <ContactForm />
-      )}
+      <Routes>
+        <Route 
+          path="/" 
+          element={<Main />} 
+        />
+        <Route 
+          path="/productos" 
+          element={<ProductList />} 
+        />
+        <Route 
+          element={<ProductDetail onAddToCart={addToCart} />} 
+        />
+        <Route 
+          path="/contacto" 
+          element={<ContactForm />} 
+        />
+        <Route 
+          element={<CreateProductForm />} 
+        />
+        <Route 
+          path="*" 
+          element={<div className="container"><h2>Página no encontrada (404)</h2></div>} 
+        />
+      </Routes>
 
       <Footer />
     </>

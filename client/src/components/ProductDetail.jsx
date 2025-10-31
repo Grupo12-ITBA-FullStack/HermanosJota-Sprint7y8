@@ -1,13 +1,42 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { useParams, useNavigate } from 'react-router-dom'; 
 
-export default function ProductDetail({ product, onBack, onAddToCart }) {
+const API = process.env.REACT_APP_API_URL || 'http://localhost:4000';
+
+export default function ProductDetail({ onAddToCart }) { 
   const [qty, setQty] = useState(1);
+  const [product, setProduct] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [err, setErr] = useState(null);
 
-  if (!product) return null;
+  const { id } = useParams(); 
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    (async () => {
+      try {
+        setLoading(true);
+        setErr(null);
+        const r = await fetch(`${API}/api/productos/${id}`);
+        if (!r.ok) throw new Error(`HTTP ${r.status}`);
+        const data = await r.json();
+        setProduct(data);
+      } catch (e) {
+        setErr(e.message);
+      } finally {
+        setLoading(false);
+      }
+    })();
+  }, [id]); 
+
+  // Manejar estados de carga y error
+  if (loading) return <p className="container">Cargando producto…</p>;
+  if (err) return <p className="container" style={{ color: '#b91c1c' }}>Error: {err}</p>;
+  if (!product) return <p className="container">Producto no encontrado.</p>;
 
   return (
     <section className="product-detail">
-      <button onClick={onBack} className="back-button">← Volver</button>
+      <button onClick={() => navigate('/productos')} className="back-button">← Volver al catálogo</button>
       <div className="detail-grid">
         <img className="detail-img" src={product.imagen || `/img/hero.jpg`} alt={product.nombre} />
         <div className="detail-info">

@@ -3,7 +3,7 @@ import ProductCard from './ProductCard';
 
 const API = process.env.REACT_APP_API_URL || 'http://localhost:4000';
 
-export default function ProductList({ onSelect = () => {} }) {
+export default function ProductList() {
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [err, setErr] = useState(null);
@@ -30,7 +30,7 @@ export default function ProductList({ onSelect = () => {} }) {
   return (
     <div className="product-grid">
       {products.map(p => (
-        <ProductCard key={p.id} product={p} onSelect={onSelect} />
+        <ProductCard key={p.id} product={p} />
       ))}
     </div>
   );
