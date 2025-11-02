@@ -30,7 +30,7 @@ export default function ProductDetail({ onAddToCart }) {
   }, [id]); 
 
   // Manejar estados de carga y error
-  if (loading) return <p className="container">Cargando producto…</p>;
+  if (loading) return <div className="loading-message">Cargando producto…</div>;
   if (err) return <p className="container" style={{ color: '#b91c1c' }}>Error: {err}</p>;
   if (!product) return <p className="container">Producto no encontrado.</p>;
 

@@ -1132,3 +1132,11 @@ footer a:hover {
     color: var(--muted);
     padding: 50px 0;
 }
+
+/* Loader para la vista de detalle */
+.loading-message {
+    text-align: center;
+    font-size: 1.2rem;
+    color: var(--muted);
+    padding: 50px 0;
+}

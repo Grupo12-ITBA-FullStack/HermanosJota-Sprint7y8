@@ -51,7 +51,8 @@ export default function App() {
           path="/productos" 
           element={<ProductList />} 
         />
-        <Route 
+        <Route
+          path="/productos/:id" 
           element={<ProductDetail onAddToCart={addToCart} />} 
         />
         <Route 
