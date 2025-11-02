@@ -1124,3 +1124,11 @@ footer a:hover {
     transition: opacity 0.2s ease-in-out;
     /* transición suave */
 }
+
+/* ================== CARGANDO CATALOGO... ================== */
+.loading {
+    text-align: center;
+    font-size: 1.2rem;
+    color: var(--muted);
+    padding: 50px 0;
+}
