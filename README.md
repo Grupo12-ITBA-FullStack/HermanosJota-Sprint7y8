@@ -1,4 +1,4 @@
-# E-Commerce Mueblería Hermanos Jota - Backend/Client (Sprint 3 y 4)
+# E-Commerce Mueblería Hermanos Jota - Backend/Client (Sprint 5 y 6)
 
 Proyecto con frontend en React (create-react-app) y backend en Node.js y Express.
 
@@ -11,24 +11,33 @@ Proyecto con frontend en React (create-react-app) y backend en Node.js y Express
   
 Estructura:
 
-- `/backend` — API con Express que sirve los datos de los productos desde un archivo local.
-- `/client` — Aplicación React (SPA) que consume la API y muestra catálogo, detalle y carrito.
+- `/backend` — API REST con Express conectada a MongoDB Atlas.
+- `/client` — Aplicación React (SPA) que consume la API para mostrar catálogo, detalle, contacto y administración.
 
 ### Requisitos
 
-- Node.js
+- Node.js 18 o superior
 - npm
+- MongoDB Atlas (cuenta gratuita)
 
-### Instalación (Windows / PowerShell)
+### Configuracion e Instalación (Windows / PowerShell)
 
-1. Instalar dependencias del backend
+1. En la carpeta `/backend`, crear un archivo .env
+con las siguientes variables de entorno:
+
+```
+PORT=4000
+MONGODB_URI=mongodb+srv://itbauser:itbapass@cluster0.qqjqlxp.mongodb.net/?appName=Cluster0
+```
+
+2. Instalar dependencias del backend
 
 ```powershell
 cd .\backend
 npm install
 ```
 
-2. Instalar dependencias del frontend
+3. Instalar dependencias del frontend
 
 ```powershell
 cd ..\client
@@ -48,7 +57,7 @@ Luego en otra terminal arrancar el cliente React:
 
 ```powershell
 cd .\client
-npm start
+npm run dev
 ```
 
 El cliente espera que la API esté disponible en `http://localhost:4000`. El backend incluye un CORS simple para desarrollo.
@@ -59,5 +68,5 @@ El cliente espera que la API esté disponible en `http://localhost:4000`. El bac
 - `GET /api/productos/:id` — devuelve un producto por id o 404 si no existe.
 - `POST /api/productos` — stub protegido por middleware `auth` y validación.
 - `PUT /api/productos/:id` — stub protegido por middleware `auth` y validación.
-
+- `DELETE /api/productos/:id` — elimina un producto por id.
 
