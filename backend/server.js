@@ -20,16 +20,18 @@ mongoose.connect(MONGODB_URI)
 // Le dice a Express que si llega un cuerpo de petición en formato JSON, lo convierta en un objeto JavaScript.
 app.use(express.json());
 
-// CORS 
-app.use((req, res, next) => {
-  res.header('Access-Control-Allow-Origin', '*');
-  res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept, Authorization');
-  if (req.method === 'OPTIONS') {
-    res.header('Access-Control-Allow-Methods', 'GET,POST,PUT,DELETE');
-    return res.status(200).json({});
-  }
-  next();
-});
+// CORS
+const cors = require('cors');
+app.use(cors({
+  origin: [
+    'http://localhost:3000',
+    'https://hermanos-jota-sprint5y6.vercel.app',
+    'https://hermanos-jota-sprint5y6-git-main-aarontournoud.vercel.app'
+  ],
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization'],
+  credentials: true
+}));
 
 // Usamos el middleware de logging globalmente
 app.use(loggerMiddleware);

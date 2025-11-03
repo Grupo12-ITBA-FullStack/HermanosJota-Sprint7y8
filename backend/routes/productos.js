@@ -7,26 +7,15 @@ const authMiddleware = require('../middlewares/auth');
 
 
 // GET para obtener todos los productos
+ProductosRouter.route('/').get(productosController.getAllProducts)
+  // Crear producto (requiere validación y auth)
+  .post(authMiddleware, validateProducto, productosController.createProduct);
 
-ProductosRouter.route('/')
-.get(productosController.getAllProducts);
-
-// GET para obtener un producto por ID
+// Rutas que operan sobre un producto específico
 ProductosRouter.route('/:id')
-.get(productosController.getProductById);
-
-
-// Crear producto (requiere validación y auth)
-ProductosRouter.post('/', authMiddleware, validateProducto, (req, res) => {
-  // lógica para agregar producto
-  res.json({ message: 'Producto agregado correctamente' });
-});
-
-// Actualizar producto
-ProductosRouter.put('/:id', authMiddleware, validateProducto, (req, res) => {
-  // lógica para actualizar producto
-  res.json({ message: 'Producto actualizado correctamente' });
-});
+  .get(productosController.getProductById)
+  .put(authMiddleware, validateProducto, productosController.updateProduct)
+  .delete(productosController.deleteProduct);
 
 
 
