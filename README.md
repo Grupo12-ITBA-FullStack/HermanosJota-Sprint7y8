@@ -1,5 +1,8 @@
 # E-Commerce Mueblería Hermanos Jota - Backend/Client (Sprint 5 y 6)
 
+### Enlace al Frontend desplegado en Vercel: https://hermanos-jota-sprint5y6.vercel.app/
+### Enlace al Backend desplegado en Render: https://hermanosjota-sprint5y6-mima.onrender.com/
+
 Proyecto con frontend en React (create-react-app) y backend en Node.js y Express.
 
 ## Integrantes
