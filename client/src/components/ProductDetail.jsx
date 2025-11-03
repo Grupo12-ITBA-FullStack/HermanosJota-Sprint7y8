@@ -53,6 +53,40 @@ export default function ProductDetail({ onAddToCart }) {
             </label>
             <button onClick={() => onAddToCart({ ...product, cant: qty })} className="btn-primary">Añadir al carrito</button>
           </div>
+
+          <div className="product-actions" style={{ marginTop: '20px' }}>
+            <button
+              onClick={async () => {
+                if (window.confirm('¿Está seguro que desea eliminar este producto?')) {
+                  try {
+                    const response = await fetch(`${API}/api/productos/${id}`, {
+                      method: 'DELETE',
+                    });
+                    
+                    if (!response.ok) {
+                      throw new Error(`HTTP ${response.status}`);
+                    }
+                    
+                    // Redireccionar al catálogo después de eliminar exitosamente
+                    navigate('/productos');
+                  } catch (error) {
+                    alert('Error al eliminar el producto: ' + error.message);
+                  }
+                }
+              }}
+              className="btn-delete"
+              style={{
+                backgroundColor: '#dc2626',
+                color: 'white',
+                padding: '8px 16px',
+                border: 'none',
+                borderRadius: '4px',
+                cursor: 'pointer'
+              }}
+            >
+              Eliminar producto
+            </button>
+          </div>
         </div>
       </div>
     </section>

@@ -6,17 +6,10 @@ import Main from "./components/Main";
 import ProductList from "./components/ProductList";
 import ProductDetail from "./components/ProductDetail";
 import ContactForm from "./components/ContactForm";
+import CreateProduct from "./components/CreateProduct";
 
 import "./styles.css";
 import "./responsive.css";
-
-// Componente placeholder para la ruta de admin
-const CreateProductForm = () => (
-  <div className="container">
-    <h2>Crear Nuevo Producto</h2>
-    <p>Aquí irá el formulario para crear productos.</p>
-  </div>
-);
 
 export default function App() {
   const [cart, setCart] = useState([]);
@@ -60,7 +53,8 @@ export default function App() {
           element={<ContactForm />} 
         />
         <Route 
-          element={<CreateProductForm />} 
+          path="/admin/crear-producto" 
+          element={<CreateProduct />} 
         />
         <Route 
           path="*" 
