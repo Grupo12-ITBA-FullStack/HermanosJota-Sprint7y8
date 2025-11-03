@@ -8,8 +8,8 @@ const authMiddleware = require('../middlewares/auth');
 
 // GET para obtener todos los productos
 ProductosRouter.route('/').get(productosController.getAllProducts)
-  // Crear producto (requiere validación y auth)
-  .post(authMiddleware, validateProducto, productosController.createProduct);
+  // Crear producto (requiere validación). No require auth para permitir creación desde frontend actual.
+  .post(validateProducto, productosController.createProduct);
 
 // Rutas que operan sobre un producto específico
 ProductosRouter.route('/:id')
