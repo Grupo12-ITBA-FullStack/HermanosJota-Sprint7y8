@@ -124,7 +124,7 @@ export default function CreateProduct() {
         <div>
           <label htmlFor="imagen">URL de la imagen:</label>
           <input
-            type="url"
+            type="text"
             id="imagen"
             name="imagen"
             value={formData.imagen}
