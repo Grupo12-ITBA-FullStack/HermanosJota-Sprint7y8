@@ -1,18 +1,37 @@
-const productos = require('../model/productos');
+const Producto = require('../models/product');
 
 // Devuelve todos los productos (array en memoria)
-const getAllProducts = (req, res) => {
+const getAllProducts = async (req, res) => {
+    try {
+        const productos = await Producto.find({});
     res.status(200).json(productos);
+    }
+    catch (error) {
+    console.error('Error al obtener usuarios:', error.message);
+    next(error); // Pasa el error al middleware de errores
+  }
+    
 };
 
 // Devuelve un producto por id (id numérico en el array en memoria)
-const getProductById = (req, res) => {
+const getProductById = async (req, res, next) => {
+    try {
     const id = parseInt(req.params.id);
-    const producto = productos.find((p) => p.id === id);
+    const producto = await Producto.findById(id);
     if (!producto) {
-        return res.status(404).json({ error: 'Producto no encontrado' });
+      // Si no se encuentra, creamos y pasamos un error 404 (Not Found)
+      const error = new Error('Producto no encontrado');
+      error.status = 404;
+      return next(error); // Importante: 'return' para no ejecutar lo siguiente
     }
-    return res.status(200).json(producto);
+    res.status(200).json(producto);
+}
+ catch (error) {
+    // Si el formato del ID es inválido (ej. no es un ObjectId válido), Mongoose lanza un error
+    console.error('Error al buscar producto por ID:', error.message);
+    error.status = 400; // Generalmente, un ID malformado es un Bad Request (400)
+    next(error);
+  }
 };
 
 // Crea un nuevo producto en el array en memoria
