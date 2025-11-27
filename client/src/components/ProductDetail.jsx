@@ -38,7 +38,7 @@ export default function ProductDetail({ onAddToCart }) {
     <section className="product-detail">
       <button onClick={() => navigate('/productos')} className="back-button">← Volver al catálogo</button>
       <div className="detail-grid">
-        <img className="detail-img" src={product.imagen || `/img/hero.jpg`} alt={product.nombre} />
+        <img className="detail-img" src={product.imagen } alt={product.nombre} />
         <div className="detail-info">
           <h2>{product.nombre}</h2>
           <p className="product-price">${product.precio?.toLocaleString('es-AR')}</p>

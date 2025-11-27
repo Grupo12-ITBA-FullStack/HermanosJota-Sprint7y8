@@ -9,7 +9,7 @@ export default function ProductCard({ product }) {
 
   return (
     <Link
-      to={`/productos/${product.id}`}
+      to={`/productos/${product._id}`}
       className="product-card"
       style={{ textDecoration: "none", color: "inherit" }}
     >

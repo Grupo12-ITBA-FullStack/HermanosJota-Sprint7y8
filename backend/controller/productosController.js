@@ -16,7 +16,7 @@ const getAllProducts = async (req, res) => {
 // Devuelve un producto por id (id numérico en el array en memoria)
 const getProductById = async (req, res, next) => {
     try {
-    const id = parseInt(req.params.id);
+    const id = req.params.id;
     const producto = await Producto.findById(id);
     if (!producto) {
       // Si no se encuentra, creamos y pasamos un error 404 (Not Found)

@@ -81,8 +81,8 @@ export default function Main() {
             <div id="destacados" className="product-grid">
               {destacados.map(p => (
                 <Link
-                  key={p.id}
-                  to={`/productos/${p.id}`}
+                  key={p._id}
+                  to={`/productos/${p._id}`}
                   className="product-card"
                   title={p.nombre}
                 >
