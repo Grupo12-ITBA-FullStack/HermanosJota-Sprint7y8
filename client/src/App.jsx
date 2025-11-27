@@ -6,6 +6,8 @@ import Main from "./components/Main";
 import ProductList from "./components/ProductList";
 import ProductDetail from "./components/ProductDetail";
 import ContactForm from "./components/ContactForm";
+import Register from "./components/Register";
+import Login from "./components/Login";
 import CreateProduct from "./components/CreateProduct";
 
 import "./styles.css";
@@ -39,6 +41,14 @@ export default function App() {
         <Route 
           path="/" 
           element={<Main />} 
+        />
+        <Route 
+          path="/login" 
+          element={<Login />} 
+        />
+        <Route 
+          path="/register" 
+          element={<Register />} 
         />
         <Route 
           path="/productos" 

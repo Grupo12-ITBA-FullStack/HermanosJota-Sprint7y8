@@ -6,6 +6,7 @@ const app = express();
 const PORT = process.env.PORT || 4000;
 
 const ProductosRouter = require('./routes/productos');
+const UsuariosRouter = require('./routes/users');
 
 // Middlewares
 const loggerMiddleware = require('./middlewares/logger');
@@ -38,6 +39,7 @@ app.use(loggerMiddleware);
 
 // --- RUTAS ---
 app.use('/api/productos', ProductosRouter);
+app.use('/api/usuarios', UsuariosRouter);
 
 app.get('/', (req, res) => {
   res.send('¡Bienvenido al API de Mueblería Jota!');

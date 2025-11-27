@@ -41,6 +41,7 @@ export default function Navbar({
           >
             <ul className="nav-links" onClick={() => setMenuOpen(false)}>
               <li><Link to="/" className="nav-btn">Inicio</Link></li>
+              <li><Link to="/login" className="nav-btn">Iniciar sesión</Link></li>
               <li><Link to="/productos" className="nav-btn">Catálogo</Link></li>
               <li><Link to="/contacto" className="nav-btn">Contacto</Link></li>
             </ul>
