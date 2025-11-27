@@ -9,7 +9,7 @@ const ProductosRouter = require('./routes/productos');
 const UsuariosRouter = require('./routes/users');
 
 // Middlewares
-const loggerMiddleware = require('./middlewares/logger');
+const authMiddleware = require('./middlewares/auth');
 const errorHandler = require('./middlewares/errorHandler');
 
 // Conexión a MongoDB Atlas
@@ -35,7 +35,7 @@ app.use(cors({
 }));
 
 // Usamos el middleware de logging globalmente
-app.use(loggerMiddleware);
+//app.use(authMiddleware);
 
 // --- RUTAS ---
 app.use('/api/productos', ProductosRouter);

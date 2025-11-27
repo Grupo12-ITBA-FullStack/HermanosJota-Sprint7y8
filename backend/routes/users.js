@@ -16,7 +16,7 @@ UsuariosRouter.route('/login')
 // Rutas que operan sobre un producto específico
 UsuariosRouter.route('/:id')
   .get(usuariosController.getUserById)
-  .put(authMiddleware,usuariosController.updateUser)
+  .put(usuariosController.updateUser)
   .delete(usuariosController.deleteUser);
 
 

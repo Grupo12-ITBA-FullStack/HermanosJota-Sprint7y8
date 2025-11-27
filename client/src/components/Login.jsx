@@ -1,6 +1,8 @@
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 
+const API = process.env.REACT_APP_API_URL || "http://localhost:4000";
+
 export default function Login() {
     const navigate = useNavigate();
     const [form, setForm] = useState({ email: "", password: "" });
@@ -20,7 +22,7 @@ export default function Login() {
     e.preventDefault();
     setLoading(true);
     try {
-        const response = await fetch('/api/users/login', {
+        const response = await fetch(`${API}/api/usuarios/login`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(form), // enviar el estado `form` ({ email, password })
@@ -34,9 +36,8 @@ export default function Login() {
 
         // Éxito: recibimos el token desde el backend
         console.log('Login exitoso, token:', data.token);
-        // guardar token, navegar, etc. Ejemplo:
-        // localStorage.setItem('token', data.token);
-        // navigate('/');
+        localStorage.setItem('token', data.token);
+        navigate('/');
     } catch (error) {
         alert(`Error en el login: ${error.message}`);
     } finally {

@@ -1,9 +1,10 @@
 const Usuario = require('../models/users');
+const mongoose = require('mongoose');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 
-// Devuelve todos los productos (array en memoria)
-const getAllUsers = async (req, res) => {
+// Devuelve todos los usuarios
+const getAllUsers = async (req, res, next) => {
     try {
         const usuarios = await Usuario.find({});
         res.status(200).json(usuarios);
@@ -36,10 +37,10 @@ const getUserById = async (req, res, next) => {
     }
 };
 
-const loginUser = async (req, res) => {
+const loginUser = async (req, res, next) => {
     try {
     // 1. Buscamos al usuario por su email
-    const user = await User.findOne({ email: req.body.email });
+    const user = await Usuario.findOne({ email: req.body.email }).select('+password');
     if (!user) {
       // Usamos un mensaje genérico por seguridad
       return res.status(400).json({ message: 'Credenciales inválidas' });
@@ -53,7 +54,7 @@ const loginUser = async (req, res) => {
  
     // 3. Si las credenciales son correctas, generamos el JWT
     const token = jwt.sign(
-      { id: user._id, username: user.username }, // Payload: datos que queremos en el token
+      { id: user._id, username: user.username, level: user.level }, // Payload: datos que queremos en el token
       process.env.JWT_SECRET,                   // La clave secreta desde .env
       { expiresIn: '1h' }                        // Opciones (ej: expira en 1 hora)
     );
@@ -69,17 +70,25 @@ const loginUser = async (req, res) => {
     });
  
   } catch (error) {
-    res.status(500).json({ message: 'Error interno del servidor' });
+    console.error('Error en login:', error.message);
+    error.status = 500;
+    next(error);
   }
 };
 
-// Crea un nuevo producto en el array en memoria
+// Crea un nuevo usuario
 const createUser = async (req, res, next) => {
     try {
         const { username, email, password } = req.body;
 
+        // Validar que todos los campos requeridos estén presentes
+        if (!username || !email || !password) {
+            const error = new Error('username, email y password son requeridos');
+            error.status = 400;
+            return next(error);
+        }
 
-        const existingUser = await User.findOne({ $or: [{ email }, { username }] });
+        const existingUser = await Usuario.findOne({ $or: [{ email }, { username }] });
         if (existingUser) {
             return res.status(400).json({ message: 'El email o nombre de usuario ya está en uso.' });
         }
@@ -87,7 +96,7 @@ const createUser = async (req, res, next) => {
         const salt = await bcrypt.genSalt(10);
         const hashedPassword = await bcrypt.hash(password, salt);
 
-        const newUser = new User({
+        const newUser = new Usuario({
             username,
             email,
             password: hashedPassword,
@@ -102,7 +111,9 @@ const createUser = async (req, res, next) => {
         });
 
     } catch (error) {
-        res.status(500).json({ message: 'Error interno del servidor', error });
+        console.error('Error al crear usuario:', error.message);
+        error.status = 500;
+        next(error);
     }
 };
 
@@ -110,7 +121,22 @@ const createUser = async (req, res, next) => {
 const updateUser = async (req, res, next) => {
     try {
         const usuarioId = req.params.id;
+        
+        // Validar ObjectId
+        if (!mongoose.Types.ObjectId.isValid(usuarioId)) {
+            const error = new Error('ID de usuario inválido');
+            error.status = 400;
+            return next(error);
+        }
+
         const datosActualizados = req.body;
+
+        // Si se envía una nueva contraseña, hashearla antes de guardar
+        if (datosActualizados && datosActualizados.password) {
+            const salt = await bcrypt.genSalt(10);
+            datosActualizados.password = await bcrypt.hash(datosActualizados.password, salt);
+        }
+
         const usuarioActualizado = await Usuario.findByIdAndUpdate(
             usuarioId,
             datosActualizados, // Mongoose automáticamente usa $set para los campos provistos
@@ -125,7 +151,7 @@ const updateUser = async (req, res, next) => {
 
         res.status(200).json({
             mensaje: 'Usuario actualizado con éxito',
-            usuario: usuarioActualizado
+            usuario: usuarioActualizado.username // Devolvemos solo el nombre de usuario actualizado
         });
     } catch (error) {
         console.error('Error al actualizar usuario:', error.message);
@@ -140,6 +166,12 @@ const deleteUser = async (req, res, next) => {
     try {
         const usuarioId = req.params.id;
 
+        // Validar ObjectId
+        if (!mongoose.Types.ObjectId.isValid(usuarioId)) {
+            const error = new Error('ID de usuario inválido');
+            error.status = 400;
+            return next(error);
+        }
 
         // 1. Usar findByIdAndDelete para encontrar y eliminar el documento
         const usuarioEliminado = await Usuario.findByIdAndDelete(usuarioId);
