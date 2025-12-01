@@ -1,11 +1,14 @@
 import { useEffect, useRef, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom"; 
+import { useAuth } from "../context/AuthContext";
 
 export default function Navbar({
   cartItems = [],
   onRemoveFromCart = () => {},
   onCloseCart = () => {},
 }) {
+  const { isAuthenticated, logout } = useAuth();
+  const navigate = useNavigate();
   const [menuOpen, setMenuOpen] = useState(false); 
   const [cartOpen, setCartOpen] = useState(false);
   const navRef = useRef(null);
@@ -25,6 +28,12 @@ export default function Navbar({
     return () => document.removeEventListener("click", onDocClick);
   }, []);
 
+  const handleLogout = () => {
+      logout();
+      setMenuOpen(false);
+      navigate("/");
+  };
+  
   return (
     <header className={""}>
       <div>
@@ -44,6 +53,14 @@ export default function Navbar({
               <li><Link to="/login" className="nav-btn">Iniciar sesión</Link></li>
               <li><Link to="/productos" className="nav-btn">Catálogo</Link></li>
               <li><Link to="/contacto" className="nav-btn">Contacto</Link></li>
+              {isAuthenticated ? (
+                  <>
+                    <li><Link to="/admin/crear-producto" className="nav-btn">Admin</Link></li>
+                    <li><button onClick={handleLogout} className="nav-btn">Cerrar Sesión</button></li>
+                  </>
+              ) : (
+                  <li><Link to="/login" className="nav-btn">Iniciar sesión</Link></li>
+              )}
             </ul>
 
             {/* Carrito */}

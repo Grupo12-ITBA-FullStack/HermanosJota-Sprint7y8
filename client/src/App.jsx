@@ -1,5 +1,7 @@
 import { useState } from "react";
 import { Routes, Route, useNavigate } from "react-router-dom";
+import { AuthProvider } from "./context/AuthContext"; 
+import ProtectedRoute from "./components/ProtectedRoute";
 import Navbar from "./components/Navbar";
 import Footer from "./components/Footer";
 import Main from "./components/Main";
@@ -31,7 +33,7 @@ export default function App() {
   const removeFromCart = (id) => setCart((prev) => prev.filter((i) => i.id !== id));
 
   return (
-    <>
+    <AuthProvider>
       <Navbar 
         cartItems={cart} 
         onRemoveFromCart={removeFromCart} 
@@ -62,10 +64,11 @@ export default function App() {
           path="/contacto" 
           element={<ContactForm />} 
         />
-        <Route 
-          path="/admin/crear-producto" 
-          element={<CreateProduct />} 
-        />
+        <Route element={<ProtectedRoute />}>
+           <Route path="/admin/crear-producto" element={<CreateProduct />} />
+           <Route path="/perfil" element={<Profile />} />
+           <Route path="/mis-pedidos" element={<Orders />} />
+        </Route>
         <Route 
           path="*" 
           element={<div className="container"><h2>Página no encontrada (404)</h2></div>} 
@@ -73,6 +76,6 @@ export default function App() {
       </Routes>
 
       <Footer />
-    </>
+    </AuthProvider>
   );
 }

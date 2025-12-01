@@ -1,10 +1,12 @@
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import { useAuth } from "../context/AuthContext"; 
 
 const API = process.env.REACT_APP_API_URL || "http://localhost:4000";
 
 export default function Login() {
     const navigate = useNavigate();
+    const { login } = useAuth(); 
     const [form, setForm] = useState({ email: "", password: "" });
     const [errors, setErrors] = useState({});
     const [serverError, setServerError] = useState("");
@@ -35,8 +37,8 @@ export default function Login() {
         }
 
         // Éxito: recibimos el token desde el backend
-        console.log('Login exitoso, token:', data.token);
-        localStorage.setItem('token', data.token);
+        console.log('Login exitoso');
+        login(data.token);
         navigate('/');
     } catch (error) {
         alert(`Error en el login: ${error.message}`);
