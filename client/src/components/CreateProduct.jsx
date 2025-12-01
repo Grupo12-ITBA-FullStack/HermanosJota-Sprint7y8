@@ -1,10 +1,12 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useAuth } from '../context/AuthContext';
 
 const API = process.env.REACT_APP_API_URL || 'http://localhost:4000';
 
 export default function CreateProduct() {
   const navigate = useNavigate();
+  const { token } = useAuth();
   const [formData, setFormData] = useState({
     nombre: '',
     descripcion: '',
@@ -40,6 +42,7 @@ export default function CreateProduct() {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
         },
         body: JSON.stringify(dataToSend)
       });
