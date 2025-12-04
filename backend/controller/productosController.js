@@ -34,21 +34,21 @@ const getProductById = async (req, res, next) => {
   }
 };
 
-// Crea un nuevo producto en el array en memoria
+// Crea un nuevo producto
 const createProduct = async (req, res, next) => {
     try {
         const datosNuevosProducto = req.body;
-        const nuevoProducto = new Usuario(datosNuevosProducto);
+        const nuevoProducto = new Producto(datosNuevosProducto);
         const productoGuardado = await nuevoProducto.save();
 
         res.status(201).json({
-      mensaje: 'Usuario creado con éxito',
-      producto: productoGuardado // Enviamos el documento completo con el _id generado por MongoDB
+      mensaje: 'Producto creado con éxito',
+      producto: productoGuardado
     });
     } catch (err) {
-       console.error('Error al crear producto:', error.message);
-    error.status = 400; // Generalmente, un error de validación es un Bad Request (400)
-    next(error);
+       console.error('Error al crear producto:', err.message);
+    err.status = 400;
+    next(err);
     }
 };
 

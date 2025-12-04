@@ -3,22 +3,21 @@ const UsuariosRouter = express.Router();
 const usuariosController = require('../controller/usuariosController');
 const authMiddleware = require('../middlewares/auth');
 
+// GET para obtener el usuario logueado
+UsuariosRouter.route('/me')
+  .get(authMiddleware, usuariosController.getCurrentUser)
+  .put(authMiddleware, usuariosController.updateCurrentUser);
 
-UsuariosRouter.route('/').get(usuariosController.getAllUsers);
-// GET para obtener todos los productos
 UsuariosRouter.route('/register')
-  // Crear producto (requiere validación). No require auth para permitir creación desde frontend actual.
+  // Crear usuario (requiere validación). No require auth para permitir creación desde frontend.
   .post(usuariosController.createUser);
 
 UsuariosRouter.route('/login')
     .post(usuariosController.loginUser);
 
-// Rutas que operan sobre un producto específico
+// Rutas que operan sobre un usuario específico (protegidas con auth)
 UsuariosRouter.route('/:id')
-  .get(usuariosController.getUserById)
-  .put(usuariosController.updateUser)
-  .delete(usuariosController.deleteUser);
-
-
+  .put(authMiddleware, usuariosController.updateUser)
+  .delete(authMiddleware, usuariosController.deleteUser);
 
 module.exports = UsuariosRouter;

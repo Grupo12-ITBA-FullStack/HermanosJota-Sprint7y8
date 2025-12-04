@@ -1,3 +1,4 @@
+
 const Usuario = require('../models/users');
 const mongoose = require('mongoose');
 const bcrypt = require('bcrypt');
@@ -54,7 +55,7 @@ const loginUser = async (req, res, next) => {
  
     // 3. Si las credenciales son correctas, generamos el JWT
     const token = jwt.sign(
-      { id: user._id, username: user.username, level: user.level }, // Payload: datos que queremos en el token
+      { id: user._id, username: user.username, role: user.role }, // Payload: datos que queremos en el token
       process.env.JWT_SECRET,                   // La clave secreta desde .env
       { expiresIn: '1h' }                        // Opciones (ej: expira en 1 hora)
     );
@@ -66,6 +67,7 @@ const loginUser = async (req, res, next) => {
         id: user._id,
         username: user.username,
         email: user.email,
+        role: user.role,
       },
     });
  
@@ -117,15 +119,23 @@ const createUser = async (req, res, next) => {
     }
 };
 
-// Actualiza un usuario por id
+// Actualiza un usuario por id (solo a sí mismo)
 const updateUser = async (req, res, next) => {
     try {
         const usuarioId = req.params.id;
+        const loggedInUserId = req.user.id;
         
         // Validar ObjectId
         if (!mongoose.Types.ObjectId.isValid(usuarioId)) {
             const error = new Error('ID de usuario inválido');
             error.status = 400;
+            return next(error);
+        }
+
+        // Validar que el usuario solo pueda actualizarse a sí mismo
+        if (usuarioId !== loggedInUserId) {
+            const error = new Error('No tienes permiso para modificar este usuario');
+            error.status = 403;
             return next(error);
         }
 
@@ -151,7 +161,7 @@ const updateUser = async (req, res, next) => {
 
         res.status(200).json({
             mensaje: 'Usuario actualizado con éxito',
-            usuario: usuarioActualizado.username // Devolvemos solo el nombre de usuario actualizado
+            usuario: usuarioActualizado
         });
     } catch (error) {
         console.error('Error al actualizar usuario:', error.message);
@@ -161,15 +171,23 @@ const updateUser = async (req, res, next) => {
     }
 };
 
-// Elimina un usuario por id
+// Elimina un usuario por id (solo a sí mismo)
 const deleteUser = async (req, res, next) => {
     try {
         const usuarioId = req.params.id;
+        const loggedInUserId = req.user.id;
 
         // Validar ObjectId
         if (!mongoose.Types.ObjectId.isValid(usuarioId)) {
             const error = new Error('ID de usuario inválido');
             error.status = 400;
+            return next(error);
+        }
+
+        // Validar que el usuario solo pueda eliminarse a sí mismo
+        if (usuarioId !== loggedInUserId) {
+            const error = new Error('No tienes permiso para eliminar este usuario');
+            error.status = 403;
             return next(error);
         }
 
@@ -195,6 +213,71 @@ const deleteUser = async (req, res, next) => {
     }
 };
 
+// Obtener datos del usuario logueado
+const getCurrentUser = async (req, res, next) => {
+    try {
+        const userId = req.user.id;
+
+        if (!mongoose.Types.ObjectId.isValid(userId)) {
+            const error = new Error('ID de usuario inválido');
+            error.status = 400;
+            return next(error);
+        }
+
+        const usuario = await Usuario.findById(userId).select('-password');
+
+        if (!usuario) {
+            const error = new Error('Usuario no encontrado');
+            error.status = 404;
+            return next(error);
+        }
+
+        res.status(200).json(usuario);
+    } catch (error) {
+        console.error('Error al obtener usuario actual:', error.message);
+        error.status = 500;
+        next(error);
+    }
+};
+// Actualiza el usuario autenticado (PUT /me)
+const updateCurrentUser = async (req, res, next) => {
+    try {
+        const userId = req.user.id;
+
+        if (!mongoose.Types.ObjectId.isValid(userId)) {
+            const error = new Error('ID de usuario inválido');
+            error.status = 400;
+            return next(error);
+        }
+
+        const datosActualizados = req.body;
+
+        // Si se envía una nueva contraseña, hashearla antes de guardar
+        if (datosActualizados && datosActualizados.password) {
+            const salt = await bcrypt.genSalt(10);
+            datosActualizados.password = await bcrypt.hash(datosActualizados.password, salt);
+        }
+
+        const usuarioActualizado = await Usuario.findByIdAndUpdate(
+            userId,
+            datosActualizados,
+            { new: true, runValidators: true }
+        );
+
+        if (!usuarioActualizado) {
+            const error = new Error('Usuario no encontrado para actualizar');
+            error.status = 404;
+            return next(error);
+        }
+
+        res.status(200).json(usuarioActualizado);
+    } catch (error) {
+        console.error('Error al actualizar usuario actual:', error.message);
+        error.status = 400;
+        next(error);
+    }
+};
+
 module.exports = {
     getAllUsers,
     loginUser,
@@ -202,4 +285,6 @@ module.exports = {
     createUser,
     updateUser,
     deleteUser,
+    getCurrentUser,
+    updateCurrentUser,
 };

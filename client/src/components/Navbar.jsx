@@ -1,13 +1,11 @@
 import { useEffect, useRef, useState } from "react";
 import { Link, useNavigate } from "react-router-dom"; 
 import { useAuth } from "../context/AuthContext";
+import { useCart } from "../context/CartContext";
 
-export default function Navbar({
-  cartItems = [],
-  onRemoveFromCart = () => {},
-  onCloseCart = () => {},
-}) {
-  const { isAuthenticated, logout } = useAuth();
+export default function Navbar() {
+  const { isAuthenticated, user, logout } = useAuth();
+  const { cartItems, removeFromCart } = useCart();
   const navigate = useNavigate();
   const [menuOpen, setMenuOpen] = useState(false); 
   const [cartOpen, setCartOpen] = useState(false);
@@ -50,14 +48,19 @@ export default function Navbar({
           >
             <ul className="nav-links" onClick={() => setMenuOpen(false)}>
               <li><Link to="/" className="nav-btn">Inicio</Link></li>
-              <li><Link to="/login" className="nav-btn">Iniciar sesión</Link></li>
               <li><Link to="/productos" className="nav-btn">Catálogo</Link></li>
               <li><Link to="/contacto" className="nav-btn">Contacto</Link></li>
               {isAuthenticated ? (
                   <>
-                    <li><Link to="/admin/crear-producto" className="nav-btn">Admin</Link></li>
-                    <li><button onClick={handleLogout} className="nav-btn">Cerrar Sesión</button></li>
+                    <li><Link to="/perfil" className="nav-btn">Perfil</Link></li>
+                    <li><Link to="/mis-pedidos" className="nav-btn">Pedidos</Link></li>
+                    <li><button onClick={handleLogout} className="nav-btn">Cerrar Sesión</button></li>    
+                    {user?.role === 'admin' && (
+                      <li><Link to="/admin/gestionar-productos" className="nav-btn">Gestionar Productos</Link></li>
+                    )}
+                    
                   </>
+                  
               ) : (
                   <li><Link to="/login" className="nav-btn">Iniciar sesión</Link></li>
               )}
@@ -91,7 +94,7 @@ export default function Navbar({
                 <div id="cart-items">
                   {cartItems.length === 0 && <p>Sin productos.</p>}
                   {cartItems.map((it) => (
-                    <div key={it.id}>
+                    <div key={it._id}>
                       <div>
                         <strong>{it.nombre}</strong>{" "}
                         <span>× {it.cant ?? 1}</span>
@@ -100,7 +103,7 @@ export default function Navbar({
                         ${(it.precio * (it.cant ?? 1)).toLocaleString("es-AR")}
                         <button
                           className="cart-remove"
-                          onClick={() => onRemoveFromCart(it.id)}
+                          onClick={() => removeFromCart(it._id)}
                           title="Quitar"
                         >
                           ×
@@ -112,11 +115,32 @@ export default function Navbar({
                 <div id="cart-total">
                   Total: ${cartTotal.toLocaleString("es-AR")}
                 </div>
+                {cartItems.length > 0 && (
+                  <button
+                    id="cart-checkout"
+                    onClick={() => {
+                      setCartOpen(false);
+                      navigate("/checkout");
+                    }}
+                    style={{
+                      width: "100%",
+                      padding: "8px",
+                      backgroundColor: "#28a745",
+                      color: "white",
+                      border: "none",
+                      borderRadius: "4px",
+                      cursor: "pointer",
+                      marginBottom: "8px",
+                      fontWeight: "bold",
+                    }}
+                  >
+                    Ir a Checkout
+                  </button>
+                )}
                 <button
                   id="cart-close"
                   onClick={() => {
                     setCartOpen(false);
-                    onCloseCart();
                   }}
                 >
                   Cerrar

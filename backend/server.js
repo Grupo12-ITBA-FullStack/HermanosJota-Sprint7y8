@@ -7,6 +7,7 @@ const PORT = process.env.PORT || 4000;
 
 const ProductosRouter = require('./routes/productos');
 const UsuariosRouter = require('./routes/users');
+const OrdenesRouter = require('./routes/ordenes');
 
 // Middlewares
 const authMiddleware = require('./middlewares/auth');
@@ -40,6 +41,7 @@ app.use(cors({
 // --- RUTAS ---
 app.use('/api/productos', ProductosRouter);
 app.use('/api/usuarios', UsuariosRouter);
+app.use('/api/ordenes', OrdenesRouter);
 
 app.get('/', (req, res) => {
   res.send('¡Bienvenido al API de Mueblería Jota!');

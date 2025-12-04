@@ -1,11 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom'; 
 import { useAuth } from '../context/AuthContext';
+import { useCart } from '../context/CartContext';
 
 const API = process.env.REACT_APP_API_URL || 'http://localhost:4000';
 
-export default function ProductDetail({ onAddToCart }) { 
+export default function ProductDetail() { 
   const { token, isAuthenticated } = useAuth();
+  const { addToCart } = useCart();
   const [qty, setQty] = useState(1);
   const [product, setProduct] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -31,26 +33,7 @@ export default function ProductDetail({ onAddToCart }) {
     })();
   }, [id]); 
 
-  const handleDelete = async () => {
-    if (!window.confirm('¿Está seguro que desea eliminar este producto?')) return;
-
-    try {
-      const response = await fetch(`${API}/api/productos/${id}`, {
-        method: 'DELETE',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}` 
-        },
-      });
-
-      if (!response.ok) {
-        throw new Error(`HTTP ${response.status}`);
-      }
-      navigate('/productos');
-    } catch (error) {
-      alert('Error al eliminar el producto: ' + error.message);
-    }
-  };
+  
 
   // Manejar estados de carga y error
   if (loading) return <div className="loading-message">Cargando producto…</div>;
@@ -74,27 +57,10 @@ export default function ProductDetail({ onAddToCart }) {
               Cantidad:
               <input type="number" min="1" value={qty} onChange={(e) => setQty(Number(e.target.value) || 1)} />
             </label>
-            <button onClick={() => onAddToCart({ ...product, cant: qty })} className="btn-primary">Añadir al carrito</button>
+            <button onClick={() => addToCart({ ...product, cant: qty })} className="btn-primary">Añadir al carrito</button>
           </div>
 
-          <div className="product-actions" style={{ marginTop: '20px' }}>
-            {isAuthenticated && (
-              <button
-                onClick={handleDelete}
-                className="btn-delete"
-                style={{
-                  backgroundColor: '#dc2626',
-                  color: 'white',
-                  padding: '8px 16px',
-                  border: 'none',
-                  borderRadius: '4px',
-                  cursor: 'pointer'
-                }}
-              >
-                Eliminar producto
-              </button>
-            )}
-          </div>
+          
         </div>
       </div>
     </section>

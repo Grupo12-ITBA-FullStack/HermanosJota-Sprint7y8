@@ -20,7 +20,7 @@ export default function Login() {
         setServerError("");
     };
 
-        const handleSubmit = async (e) => {
+    const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
     try {
@@ -39,7 +39,17 @@ export default function Login() {
         // Éxito: recibimos el token desde el backend
         console.log('Login exitoso');
         login(data.token);
-        navigate('/');
+        
+        // Verificar si hay carrito pendiente
+        const cart = localStorage.getItem("cart");
+        const cartItems = cart ? JSON.parse(cart) : [];
+        
+        // Si hay items en el carrito, redirigir a checkout; si no, redirigir a inicio
+        if (cartItems.length > 0) {
+            navigate('/checkout');
+        } else {
+            navigate('/');
+        }
     } catch (error) {
         alert(`Error en el login: ${error.message}`);
     } finally {
