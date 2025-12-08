@@ -27,7 +27,7 @@ const cors = require('cors');
 app.use(cors({
   origin: [
     'http://localhost:3000',
-    'hermanos-jota-sprint7y8.vercel.app',
+    'http://hermanos-jota-sprint7y8.vercel.app',
     'https://hermanos-jota-sprint7y8-6pfqhe7dl-franciscos-projects-2672fe22.vercel.app'
   ],
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
